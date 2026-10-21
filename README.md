@@ -1,21 +1,45 @@
-# claude-of-duty-too
+# Claude of Duty
 
-Prepare the selected source snapshot in GitHub Actions.
+A browser-based FPS built with [Three.js](https://threejs.org/) — every model, texture,
+shader, and sound is generated in code. No external assets.
 
-<!-- omgithub:readme:start -->
-## 🚀 Build, play, and remix with OMGithub
+![Combat](docs/state-at-pause-combat.png)
 
-**Remixed using [OMGithub.com](https://omgithub.com).**
+## Origin
 
-[![OMGithub](https://img.shields.io/badge/OMGithub-Open%20project-orange?style=for-the-badge)](https://omgithub.com/arronnight/claude-of-duty-too)
-[![GitHub](https://img.shields.io/badge/GitHub-Source-181717?logo=github&style=for-the-badge)](https://github.com/arronnight/claude-of-duty-too)
+This project started from a demo built by [Matt Shumer](https://x.com/mattshumer_) (`@mattshumer_`):
 
-- 🎮 [Open the project](https://omgithub.com/arronnight/claude-of-duty-too).
-- ✨ [Remix this project](https://omgithub.com/?remix=arronnight%2Fclaude-of-duty-too).
-- 💻 [Explore the source](https://github.com/arronnight/claude-of-duty-too).
-- 🛠️ [Check build runs](https://github.com/arronnight/claude-of-duty-too/actions).
-- 🐛 [Report an issue](https://github.com/arronnight/claude-of-duty-too/issues).
-- 👤 [Explore the creator's projects](https://omgithub.com/arronnight).
-- 🌍 [Create with OMGithub](https://omgithub.com).
-- 🧬 [Explore the remix source](https://github.com/jrsmith1279/claude-of-duty-too/tree/30240119e6f2ccf7c095779b527b8498f90845c5).
-<!-- omgithub:readme:end -->
+> Claude Opus 5 one-shotted this game.
+>
+> EVERYTHING you see in this demo is custom code... not a single external
+> asset was used.
+>
+> AI games are going to be amazing.
+>
+> — [@mattshumer_, Jul 25](https://x.com/mattshumer_)
+
+Using Matt's prompt as the starting point, this build (`@jackjackatx`) was taken further:
+
+> After 3x 5-hour windows on the $100 Claude Code Max plan (~$600 in tokens if not
+> on the Claude sub), this is what I have using @mattshumer_'s prompt! The only
+> additional prompting I did was to wrap up & write progress to memory as it got
+> near usage limits, & to pick up from memory to get going again on a fresh limit.
+> This was a total of about 6.5 hours of Opus 5 working on it across the 3 sessions.
+>
+> — [@jackjackatx](https://x.com/jackjackatx)
+
+## Development
+
+```bash
+npm install
+npm run dev      # dev server at :5173
+npm run build    # production build to dist/
+npm run preview  # preview the production build at :4173
+```
+
+See `docs/` for the full architecture, art direction, and gameplay spec this build
+was held to.
+
+## License
+
+MIT — see [LICENSE](LICENSE).

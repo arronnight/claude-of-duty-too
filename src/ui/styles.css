@@ -1,0 +1,40 @@
+:root { color-scheme: dark; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+#viewport { display: block; width: 100vw; height: 100vh; cursor: none; }
+#ui-root { position: fixed; inset: 0; pointer-events: none; font-family: system-ui, sans-serif; }
+
+/*
+ * The whole combat HUD is one 2D canvas over the WebGL surface. It is sized in
+ * device pixels by HUD.js and scaled back with a CSS width/height so text is
+ * crisp on a HiDPI display without the widgets having to know about the ratio.
+ *
+ * `display:none` — not opacity — is what setVisible(false) toggles: a zero-alpha
+ * canvas is still composited every frame and still shows up in a readback, and
+ * the blind critic frames must contain no HUD at all.
+ */
+#hud-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  /* Never let the browser resample the HUD; it is drawn at native resolution. */
+  image-rendering: auto;
+}
+
+/*
+ * Low-health desaturation. Filtering the already-composited frame is the only
+ * way to reach WebGL pixels from the DOM, and it is free while display:none —
+ * which is the case above 30 HP, i.e. almost always.
+ */
+#hud-desat {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: none;
+  backdrop-filter: saturate(1);
+  -webkit-backdrop-filter: saturate(1);
+}
+
+#debug-overlay { z-index: 10; }
