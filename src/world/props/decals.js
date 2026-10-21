@@ -1412,6 +1412,27 @@ export function wallDecals(ctx, site, soft, hard, kit, rand, density = 1, env = 
     const ux = (f.bx - f.ax) / len, uz = (f.bz - f.az) / len;
     const h = Math.min(f.top - f.base, 20);
     const at = (t, off) => [f.ax + ux * len * t + f.nx * off, f.az + uz * len * t + f.nz * off];
+    // Anchors reported by the facade pass: window cills and AC units. Filtering
+    // by position and normal binds each one to this face rather than sprinkling
+    // a rust run somewhere on the wall and hoping it lines up.
+    const anchors = [];
+    if (Array.isArray(env?.sills)) {
+      for (const s of env.sills) {
+        const dx = s.x - f.ax, dz = s.z - f.az;
+        const along = dx * ux + dz * uz;
+        const perp = dx * f.nx + dz * f.nz;
+        if (along < 0 || along > len || Math.abs(perp) > 1.0) continue;
+        if (s.nx * f.nx + s.nz * f.nz < 0.75) continue;
+        if (s.y <= f.base + 0.7 || s.y >= f.top - 0.4) continue;
+        // The sill itself sits proud of the wall, so project it back onto the
+        // facade plane; otherwise the run floats a few centimetres off.
+        anchors.push({
+          x: f.ax + ux * along + f.nx * 0.012,
+          z: f.az + uz * along + f.nz * 0.012,
+          y: s.y,
+        });
+      }
+    }
 
     // 1. DIRT GRAVITY at the wall base — rule 4, and the strongest single
     // anti-floating cue there is on a facade. A building meets the ground; the
@@ -1444,13 +1465,19 @@ export function wallDecals(ctx, site, soft, hard, kit, rand, density = 1, env = 
     }
 
     // 1b. RUST RUNS from whatever is bolted to the wall down to the plinth.
-    // `facade.js` returns a `sills` array with the exact anchor points these
-    // want, but `Props.js` only forwards `bays`, so this walks the run and
-    // sites them itself. Anchored would be better; that is a documented gap.
+    // `facade.js` hands over the exact cill and AC-unit anchors, so a run starts
+    // under real metal. Only if a face has none (a blank party wall) does it
+    // fall back to the old random placement.
     for (let i = 0, n = Math.round(len * 0.06 * density); i < n; i++) {
-      const [x, z] = at(rand(), 0);
-      const y0 = f.base + 1.8 + rand() * Math.max(0.5, Math.min(h - 2.4, 5));
-      const sh = Math.max(1.2, y0 - f.base);
+      let x, z, y0;
+      if (anchors.length) {
+        const a = anchors[(rand() * anchors.length) | 0];
+        x = a.x; z = a.z; y0 = a.y;
+      } else {
+        [x, z] = at(rand(), 0);
+        y0 = f.base + 1.8 + rand() * Math.max(0.5, Math.min(h - 2.4, 5));
+      }
+      const sh = Math.max(0.8, y0 - f.base);
       putTinted(soft, 'drip', x, y0 - sh * 0.5, z, f.nx, f.nz,
         0.22, sh, 0.42, 0.30, 0.22);
     }

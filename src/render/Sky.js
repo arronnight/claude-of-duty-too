@@ -319,13 +319,13 @@ export class SkySystem {
     //
     // The ladder this hits, opacity = (1 - exp(-tau)) * maxOpacity, at eye
     // height with the sun up:
-    //   25 m 0.09 / 40 m 0.14 / 70 m 0.23 / 145 m 0.41 / 370 m 0.71
-    //   900 m 0.88 / 2100 m 0.90
+    //   25 m 0.07 / 40 m 0.11 / 70 m 0.18 / 145 m 0.31 / 370 m 0.59
+    //   900 m 0.83 / 2100 m 0.90
     // At the cap the far ridge still contributes 10% of its own radiance,
     // which is the 7-9% contrast against bright sky that a real distant range
     // has. Do not push past 0.92 (the ridge disappears) or below 0.88 (2 km
     // and 20 km stop separating).
-    AP.density = 0.00420 + 0.00190 * (1 - eph.intensity);
+    AP.density = 0.00300 + 0.00160 * (1 - eph.intensity);
     AP.heightFalloff = 0.011;
 
     // Fallback colour for anything that misses the shared uniform.

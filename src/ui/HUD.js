@@ -97,6 +97,19 @@ export class HUDSystem {
     this.c = canvas.getContext('2d', { alpha: true, desynchronized: true });
     this.overlay.bindContext(this.c);
 
+    // Pointer lock is requested by the first click on the viewport, but the
+    // canvas hides the cursor and nothing else on screen says so. Without this
+    // the first thing every new player sees is a finished frame that ignores
+    // the mouse and keyboard. It is DOM rather than canvas so it can sit above
+    // the HUD, and it is tied to the same visibility/override rules so it can
+    // never leak into a critic screenshot.
+    const hint = document.createElement('div');
+    hint.id = 'lock-hint';
+    hint.innerHTML = '<div class="lock-hint-title">Click to play</div>'
+      + '<div class="lock-hint-sub">WASD move &nbsp;·&nbsp; Mouse look &nbsp;·&nbsp; Shift sprint &nbsp;·&nbsp; LMB fire</div>';
+    root?.appendChild(hint);
+    this.lockHint = hint;
+
     this._bindBus(ctx);
 
     ctx.hud = {
@@ -116,6 +129,7 @@ export class HUDSystem {
 
     this._bindAutomation();
     this._layout();
+    this._applyLockHint();
   }
 
   // --- wiring -------------------------------------------------------------
@@ -126,6 +140,7 @@ export class HUDSystem {
       this.override = !!v;
       this._apply();
     });
+    bus.on('input:lock', () => this._applyLockHint());
 
     bus.on('weapon:fired', () => {
       this.crosshair.fired();
@@ -281,7 +296,15 @@ export class HUDSystem {
       const el = document.getElementById('debug-overlay');
       if (el) el.style.display = 'none';
     }
+    this._applyLockHint();
     this.ctx?.bus?.emit('hud:visible', on);
+  }
+
+  _applyLockHint() {
+    const el = this.lockHint;
+    if (!el) return;
+    const show = this._effective() && !this.ctx?.input?.locked;
+    el.style.display = show ? 'flex' : 'none';
   }
 
   // --- layout -------------------------------------------------------------

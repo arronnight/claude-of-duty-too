@@ -730,7 +730,10 @@ function jersey(bs, rand, x, y, z, yaw, colliders) {
   const g = geo();
   const len = 1.6 + rand() * 1.2;
   jitterColor(_c, rand, 0.16, 0.03, 0.03);
-  _c.multiplyScalar(1.06);
+  // Concrete in direct sun still has to read as concrete, not as a white
+  // card. The old 1.06 lift pushed a sun-facing face close to clipping and
+  // made the barrier the brightest object in the establishing frame.
+  _c.multiplyScalar(0.74);
   const body = _c.clone();
   let n = 1;
   bs.addPitched('concrete_wall', g.barrier, x, y, z, yaw, 0, (rand() - 0.5) * 0.03,

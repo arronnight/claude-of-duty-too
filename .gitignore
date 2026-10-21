@@ -8,3 +8,17 @@ refs/
 blind/
 profile/
 __pycache__/
+
+screenshots/
+
+*.pid
+
+.agents/
+
+.agentsweb/
+
+.omgithub-runtime/
+
+.opencode-ssh/
+
+.opencode-web/

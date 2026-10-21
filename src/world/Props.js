@@ -143,6 +143,9 @@ export class PropSystem {
     }
     this.stats.ms = Math.round(((globalThis.performance || Date).now() - t0) * 10) / 10;
     ctx.props.site = this.site || null;
+    // Quality presets may cap the prop density. Tier 0 (the readable silhouettes)
+    // always survives; this only sheds the optional fine clutter and decals.
+    if (typeof ctx.quality?.props === 'number') this.setDensity(ctx.quality.props);
     this._registerColliders(ctx);
   }
 
@@ -215,6 +218,7 @@ export class PropSystem {
     const fac = facadeDetail(ctx, site, core, rand, 1, env);
     pieces += fac.parts;
     env.bays = fac.bays || [];
+    env.sills = fac.sills || [];
     pieces += rooftops(ctx, site, core, rand, 1, env).parts;
     pieces += awnings(ctx, site, core, rand, 1, env).parts;
     pieces += overheadLines(ctx, site, core, rand, 1, env).parts;

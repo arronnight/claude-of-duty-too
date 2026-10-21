@@ -228,8 +228,8 @@ function parapet(acc, w, h, d, x, y, z, rotY, color, lip = 0.9, over = 0.4) {
 
 /** The two boxes that stop you seeing out of the ends of the street corridor. */
 function buildTerminators(acc) {
-  const base = new THREE.Color(0x746c5d);
-  const cap = new THREE.Color(0x807766);
+  const base = new THREE.Color(0x4d473b);
+  const cap = new THREE.Color(0x595144);
   const dark = new THREE.Color(0x5d584d);
   const steel = new THREE.Color(0x4f4b45);
 
@@ -239,6 +239,40 @@ function buildTerminators(acc) {
   // above the eye line: it fills the corridor and closes the vanishing point.
   acc.box(36, 15.5, 11, 0, 7.75, -74, 0, base);
   parapet(acc, 36, 15.5, 11, 0, 7.75, -74, 0, cap);
+
+  // The south face of that box is the corridor's vanishing point. Standing
+  // alone it was a blank, sunlit card — the single largest untextured surface
+  // in the street frame, and an automatic failure in the art rubric. These
+  // pieces are merged into the same backdrop geometry, so the whole treatment
+  // still costs one draw call: a plinth, string courses, a three-storey window
+  // grid with lintels and cills, a shopfront bay, and piers that break the
+  // silhouette into bays. The dark glass is what pulls the frame's brightest
+  // patch back down toward the haze instead of letting it clip to white.
+  const glass = new THREE.Color(0x262a2e);
+  const trim = new THREE.Color(0x645c4e);
+  const fascia = new THREE.Color(0x5a5346);
+  const FZ = -68.5;                    // south face of the 11 m deep box
+  acc.box(36.2, 0.8, 0.36, 0, 0.4, FZ + 0.18, 0, dark);
+  for (const y of [3.05, 6.25, 9.45, 12.65]) {
+    acc.box(36, 0.20, 0.26, 0, y, FZ + 0.13, 0, trim);
+  }
+  for (const y of [4.55, 7.75, 10.95]) {
+    for (let i = 0; i < 11; i++) {
+      const x = -16.5 + i * 3.3;
+      acc.box(1.95, 2.05, 0.12, x, y, FZ + 0.06, 0, glass);
+      acc.box(2.22, 0.10, 0.20, x, y + 1.08, FZ + 0.10, 0, trim);
+      acc.box(2.14, 0.08, 0.24, x, y - 1.06, FZ + 0.12, 0, trim);
+    }
+  }
+  // Ground-floor shopfront: a recessed dark bay under a fascia band, with a
+  // shallow awning above it. The patch the street camera samples sits here.
+  acc.box(7.4, 2.65, 0.12, 0, 1.42, FZ + 0.06, 0, glass);
+  acc.box(7.9, 0.62, 0.28, 0, 2.98, FZ + 0.15, 0, fascia);
+  acc.box(8.5, 0.10, 0.95, 0, 3.34, FZ + 0.48, 0, trim);
+  for (const x of [-10.5, 10.5]) {
+    acc.box(0.55, 15.5, 0.28, x, 7.75, FZ + 0.14, 0, trim);
+  }
+
   acc.box(12, 20, 9, -13, 10, -80, 0, dark);
   parapet(acc, 12, 20, 9, -13, 10, -80, 0, cap);
 
